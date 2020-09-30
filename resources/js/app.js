@@ -1,6 +1,5 @@
-/* turn this into workout/activity tracker */
-
-/** percentages still show as 21 instead of -- when N/A on items themselves */
+// Add access to previous months after adding 
+// Session storage for something?
 
 // BUDGET CONTROLLER
 var budgetController = (function() {
@@ -43,7 +42,8 @@ var budgetController = (function() {
             inc: 0
         },
         budget: 0,
-        percentage: -1
+        percentage: -1,
+        
     };
     return {
         addItem: function(type, des, val) {
@@ -119,6 +119,9 @@ var budgetController = (function() {
                 totalExp: data.totals.exp,
                 percentage: data.percentage
             }
+        },
+        persistData: function() {
+            localStorage.setItem('data', JSON.stringify(data));
         },
         testing: function() {
             console.log(data);
@@ -293,7 +296,8 @@ var controller = (function(budgetCtrl, UICtrl) {
 
         // read the percentages from the budget controller
         var percentages = budgetCtrl.getPercentages();
-        // update the ui with the new percentages
+
+        // update the UI with the new percentages
         UICtrl.displayPercentages(percentages);
 
     };
@@ -320,6 +324,9 @@ var controller = (function(budgetCtrl, UICtrl) {
             // calculate n update the percentages
             updatePercentages();
 
+            // Persist data in localStorage
+            budgetCtrl.persistData();
+
         }; 
     };
     var ctrlDeleteItem = function(event) {
@@ -339,7 +346,9 @@ var controller = (function(budgetCtrl, UICtrl) {
             // Update and show the new budget
             updateBudget();
 
-        }
+            // Persist data in localStorage
+            budgetCtrl.persistData();
+        };
     };
     return {
         init: function() {
