@@ -1,6 +1,10 @@
 // Add access to previous months after adding 
 // Session storage for something?
 
+// Global state
+// Items, budget, data
+var state = {};
+
 // BUDGET CONTROLLER
 var budgetController = (function() {
     var Expense = function(id, description, value) {
@@ -122,6 +126,14 @@ var budgetController = (function() {
         },
         persistData: function() {
             localStorage.setItem('data', JSON.stringify(data));
+        },
+        readStorage: function() {
+            var storage = JSON.parse(localStorage.getItem('data'));
+
+            // Restore data from localStorage
+            if (storage) {
+                this.data = storage;
+            };
         },
         testing: function() {
             console.log(data);
@@ -267,16 +279,22 @@ var controller = (function(budgetCtrl, UICtrl) {
     var setupEventListeners = function() {
         var DOM = UICtrl.getDOMstrings();
 
-        document.querySelector(DOM.inputBtn).addEventListener('click', ctrlAddItem);
+        document.querySelector(DOM.inputBtn).addEventListener('click', state.ctrlAddItem);
 
         document.addEventListener('keypress', function(event) {
             if (event.keyCode === 13 || event.which === 13) {
-                ctrlAddItem();
+                state.ctrlAddItem();
             }
         });
-        document.querySelector(DOM.container).addEventListener('click', ctrlDeleteItem);
+        document.querySelector(DOM.container).addEventListener('click', state.ctrlDeleteItem);
 
-        document.querySelector(DOM.inputType).addEventListener('change', UICtrl.changedType);
+        document.querySelector(DOM.inputType).addEventListener('change', state.UICtrl.changedType);
+
+        window.addEventListener('load', function() {
+            state.budgetCtrl.readStorage();
+            state.ctrlAddItem();
+            state.updateBudget();
+        });
     };
 
     var updateBudget = function() {
@@ -310,7 +328,7 @@ var controller = (function(budgetCtrl, UICtrl) {
 
         if (input.description !== "" && !isNaN(input.value) && input.value > 0) /* maybe make zero possible? Prolly not */ {
             // 2. Add the item to the budget controller
-            newItem = budgetCtrl.addItem(input.type, input.description, input.value);
+            newItem = state.budgetCtrl.addItem(input.type, input.description, input.value);
 
             // 3. Add the item to the UI
             UICtrl.addListItem(newItem, input.type);
@@ -359,7 +377,6 @@ var controller = (function(budgetCtrl, UICtrl) {
                 totalInc: 0,
                 totalExp: 0,
                 percentage: -1
-                //Maybe change this to html?
             });
             setupEventListeners();
         }
