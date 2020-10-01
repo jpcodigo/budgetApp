@@ -1,10 +1,6 @@
 // Add access to previous months after adding 
 // Session storage for something?
 
-// Global state
-// Items, budget, data
-var state = {};
-
 // BUDGET CONTROLLER
 var budgetController = (function() {
     var Expense = function(id, description, value) {
@@ -279,21 +275,21 @@ var controller = (function(budgetCtrl, UICtrl) {
     var setupEventListeners = function() {
         var DOM = UICtrl.getDOMstrings();
 
-        document.querySelector(DOM.inputBtn).addEventListener('click', state.ctrlAddItem);
+        document.querySelector(DOM.inputBtn).addEventListener('click', ctrlAddItem);
 
         document.addEventListener('keypress', function(event) {
             if (event.keyCode === 13 || event.which === 13) {
-                state.ctrlAddItem();
+                ctrlAddItem();
             }
         });
-        document.querySelector(DOM.container).addEventListener('click', state.ctrlDeleteItem);
+        document.querySelector(DOM.container).addEventListener('click', ctrlDeleteItem);
 
-        document.querySelector(DOM.inputType).addEventListener('change', state.UICtrl.changedType);
+        document.querySelector(DOM.inputType).addEventListener('change', UICtrl.changedType);
 
         window.addEventListener('load', function() {
-            state.budgetCtrl.readStorage();
-            state.ctrlAddItem();
-            state.updateBudget();
+            budgetCtrl.readStorage();
+            ctrlAddItem();
+            updateBudget();
         });
     };
 
@@ -328,7 +324,7 @@ var controller = (function(budgetCtrl, UICtrl) {
 
         if (input.description !== "" && !isNaN(input.value) && input.value > 0) /* maybe make zero possible? Prolly not */ {
             // 2. Add the item to the budget controller
-            newItem = state.budgetCtrl.addItem(input.type, input.description, input.value);
+            newItem = budgetCtrl.addItem(input.type, input.description, input.value);
 
             // 3. Add the item to the UI
             UICtrl.addListItem(newItem, input.type);
