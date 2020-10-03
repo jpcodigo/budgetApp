@@ -101,7 +101,7 @@ var budgetController = (function() {
                 data.percentage = -1;
             };
         },
-        calculatePercentages: function(cur) {
+        calculatePercentages: function() {
             data.allItems.exp.forEach(function(cur) {
                 cur.calculatePercentage(data.totals.inc);
             });          
@@ -278,7 +278,7 @@ var controller = (function(budgetCtrl, UICtrl) {
         document.querySelector(DOM.inputBtn).addEventListener('click', ctrlAddItem);
 
         document.addEventListener('keypress', function(event) {
-            if (event.keyCode === 13 || event.which === 13) {
+            if (event.code === 13 || event.which === 13) {
                 ctrlAddItem();
             }
         });
@@ -287,6 +287,20 @@ var controller = (function(budgetCtrl, UICtrl) {
         document.querySelector(DOM.inputType).addEventListener('change', UICtrl.changedType);
 
         window.addEventListener('load', loadStorage);
+    };
+
+    var loadUI = function() {
+        var data = budgetCtrl.readStorage();
+        data.allItems.inc.forEach(function(el) {
+            UICtrl.addListItem(el, 'inc');
+        });
+        data.allItems.exp.forEach(function(el) {
+            UICtrl.addListItem(el, 'exp');
+        });
+
+        // Reestablish prototypes
+        
+
     };
 
     var updateBudget = function() {
@@ -331,7 +345,7 @@ var controller = (function(budgetCtrl, UICtrl) {
             // 5. Calculate and update budget
             updateBudget();
 
-            // calculate n update the percentages
+            // calculate and update the percentages
             updatePercentages();
 
             // Persist data in localStorage
@@ -362,16 +376,11 @@ var controller = (function(budgetCtrl, UICtrl) {
     };
     var loadStorage = function() {
         
-        // read storage
-        var data = budgetCtrl.readStorage();
-
         // add items to UI
-        data.allItems.inc.forEach(function(el) {
-            UICtrl.addListItem(el, 'inc');
-        });
-        data.allItems.exp.forEach(function(el) {
-            UICtrl.addListItem(el, 'exp');
-        });
+        loadUI();
+
+        // reestablish prototypes
+        activateProto();
 
         // update budget
         updateBudget();
