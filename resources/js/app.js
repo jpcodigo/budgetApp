@@ -379,9 +379,6 @@ var controller = (function(budgetCtrl, UICtrl) {
         // add items to UI
         loadUI();
 
-        // reestablish prototypes
-        activateProto();
-
         // update budget
         updateBudget();
 
