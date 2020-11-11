@@ -1,5 +1,3 @@
-/* turn this into workout/activity tracker */
-
 /** percentages still show as 21 instead of -- when N/A on items themselves */
 
 // BUDGET CONTROLLER
@@ -101,7 +99,7 @@ var budgetController = (function() {
                 data.percentage = -1;
             };
         },
-        calculatePercentages: function() {
+        calculatePercentages: function(cur) {
             data.allItems.exp.forEach(function(cur) {
                 cur.calculatePercentage(data.totals.inc);
             });          
@@ -120,21 +118,6 @@ var budgetController = (function() {
                 percentage: data.percentage
             }
         },
-<<<<<<< HEAD
-        persistData: function() {
-            localStorage.setItem('data', JSON.stringify(data));
-        },
-        readStorage: function() {
-            var storage = JSON.parse(localStorage.getItem('data'));
-
-            // Restore data from localStorage
-            if (storage) {
-                data = storage;
-            };
-            return data;
-        },
-=======
->>>>>>> parent of 6586d27... added set item in localStorage functionality
         testing: function() {
             console.log(data);
         }
@@ -275,35 +258,20 @@ var UIController = (function() {
 
 // GLOBAL APP CONTROLLER
 var controller = (function(budgetCtrl, UICtrl) {
+
     var setupEventListeners = function() {
         var DOM = UICtrl.getDOMstrings();
 
         document.querySelector(DOM.inputBtn).addEventListener('click', ctrlAddItem);
 
         document.addEventListener('keypress', function(event) {
-            if (event.code === 13 || event.which === 13) {
+            if (event.keyCode === 13 || event.which === 13) {
                 ctrlAddItem();
             }
         });
         document.querySelector(DOM.container).addEventListener('click', ctrlDeleteItem);
 
         document.querySelector(DOM.inputType).addEventListener('change', UICtrl.changedType);
-
-        window.addEventListener('load', loadStorage);
-    };
-
-    var loadUI = function() {
-        var data = budgetCtrl.readStorage();
-        data.allItems.inc.forEach(function(el) {
-            UICtrl.addListItem(el, 'inc');
-        });
-        data.allItems.exp.forEach(function(el) {
-            UICtrl.addListItem(el, 'exp');
-        });
-
-        // Reestablish prototypes
-        
-
     };
 
     var updateBudget = function() {
@@ -334,7 +302,7 @@ var controller = (function(budgetCtrl, UICtrl) {
         // 1. Get the field input data
         input = UICtrl.getInput();
 
-        if (input.description !== "" && !isNaN(input.value) && input.value > 0) {
+        if (input.description !== "" && !isNaN(input.value) && input.value > 0) /* maybe make zero possible? Prolly not */ {
             // 2. Add the item to the budget controller
             newItem = budgetCtrl.addItem(input.type, input.description, input.value);
 
@@ -347,7 +315,7 @@ var controller = (function(budgetCtrl, UICtrl) {
             // 5. Calculate and update budget
             updateBudget();
 
-            // calculate and update the percentages
+            // calculate n update the percentages
             updatePercentages();
 
         }; 
@@ -371,15 +339,6 @@ var controller = (function(budgetCtrl, UICtrl) {
 
         }
     };
-    var loadStorage = function() {
-        
-        // add items to UI
-        loadUI();
-
-        // update budget
-        updateBudget();
-
-    };
     return {
         init: function() {
             console.log('App started');
@@ -389,6 +348,7 @@ var controller = (function(budgetCtrl, UICtrl) {
                 totalInc: 0,
                 totalExp: 0,
                 percentage: -1
+                //Maybe change this to html?
             });
             setupEventListeners();
         }
