@@ -1,5 +1,3 @@
-/** percentages still show as 21 instead of -- when N/A on items themselves */
-
 // BUDGET CONTROLLER
 var budgetController = (function() {
     var Expense = function(id, description, value) {
