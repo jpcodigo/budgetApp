@@ -1,2 +1,2 @@
 # budgetApp
- My modifications to the budget app project from my javascript course
+A simple application for tracking and maintaining a budget
